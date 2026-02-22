@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { BookOpen, Users, FileText, MessageSquare, Plus, ArrowRight, Info } from "lucide-react";
 
+
 export default async function AdminDashboard() {
   const session = await getServerSession(authOptions);
 
@@ -33,9 +34,9 @@ export default async function AdminDashboard() {
   ];
 
   const quickActions = [
-    { label: "Create Class", description: "Add a new class (5th, 6th, SSC Prep, etc.)", link: "/admin/classes/create", icon: BookOpen },
-    { label: "Create Chapter", description: "Add a chapter to a class", link: "/admin/chapters/create", icon: FileText },
-    { label: "Create Topic", description: "Add content with rich text editor", link: "/admin/topics/create", icon: FileText },
+    { label: "Create Class", description: "Add a new class (5th, 6th, SSC Prep, etc.)", link: "/admin/classes/create", icon: BookOpen , bgColor: "bg-transparent", color:"text-current"},
+    { label: "Create Chapter", description: "Add a chapter to a class", link: "/admin/chapters/create", icon: FileText , bgColor: "bg-transparent", color:"text-current"},
+    { label: "Create Topic", description: "Add content with rich text editor", link: "/admin/topics/create", icon: FileText, bgColor: "bg-transparent", color:"text-current" },
   ];
 
   return (

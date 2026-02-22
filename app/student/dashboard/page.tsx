@@ -8,6 +8,19 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { BookOpen, MessageSquare, ArrowRight } from "lucide-react";
 import { classTypes } from "@/lib/utils";
+import { Prisma } from "@prisma/client";
+
+type ClassWithChapters = Prisma.ClassGetPayload<{
+  include: {
+    chapters: {
+      include: {
+        _count: {
+          select: { topics: true };
+        };
+      };
+    };
+  };
+}>;
 
 export default async function StudentDashboard() {
   const session = await getServerSession(authOptions);
@@ -18,7 +31,7 @@ export default async function StudentDashboard() {
 
   const userClass = session.user.class as string | undefined;
   
-  let classes = [];
+  let classes: ClassWithChapters[] = [];
   if (userClass) {
     const classData = await prisma.class.findUnique({
       where: { type: userClass as any },
