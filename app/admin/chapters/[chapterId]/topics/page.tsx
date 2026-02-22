@@ -1,0 +1,103 @@
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { Navbar } from "@/components/layouts/Navbar";
+import { AdminSidebar } from "@/components/layouts/AdminSidebar";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+import { Plus, FileText, ArrowLeft } from "lucide-react";
+
+export default async function ChapterTopics({
+  params,
+}: {
+  params: { chapterId: string };
+}) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "ADMIN") {
+    redirect("/login");
+  }
+
+  const chapter = await prisma.chapter.findUnique({
+    where: { id: params.chapterId },
+    include: {
+      class: true,
+      topics: {
+        orderBy: { order: "asc" },
+      },
+    },
+  });
+
+  if (!chapter) {
+    redirect("/admin/chapters");
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="flex">
+        <AdminSidebar />
+        <main className="flex-1 p-8">
+          <Link
+            href="/admin/chapters"
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Chapters
+          </Link>
+
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{chapter.title}</h1>
+              <p className="text-gray-600">{chapter.class.name}</p>
+            </div>
+            <Link href={`/admin/topics/create?chapterId=${params.chapterId}`}>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Topic
+              </Button>
+            </Link>
+          </div>
+
+          {chapter.topics.length === 0 ? (
+            <Card className="text-center py-12">
+              <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">No topics yet</p>
+              <Link href={`/admin/topics/create?chapterId=${params.chapterId}`}>
+                <Button>Create Your First Topic</Button>
+              </Link>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {chapter.topics.map((topic) => (
+                <Card key={topic.id} className="hover:shadow-xl transition-shadow">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-semibold text-gray-900">{topic.title}</h3>
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Order: {topic.order}
+                      </div>
+                    </div>
+                    <Link href={`/admin/topics/${topic.id}/edit`}>
+                      <Button variant="outline" size="sm">Edit</Button>
+                    </Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
+

@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("STUDENT") // ADMIN or STUDENT
+  class         String?   // CLASS_5, CLASS_6, CLASS_7, CLASS_8, CLASS_9, CLASS_10, SSC_PREP, GK
+  dateOfBirth   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  posts         Post[]
+  replies       Reply[]
+}
+
+model Class {
+  id          String      @id @default(cuid())
+  type        String      @unique // CLASS_5, CLASS_6, CLASS_7, CLASS_8, CLASS_9, CLASS_10, SSC_PREP, GK
+  name        String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  chapters    Chapter[]
+}
+
+model Chapter {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  order       Int
+  classId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  topics      Topic[]
+  
+  @@index([classId])
+}
+
+model Topic {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   // Rich text content
+  order       Int
+  chapterId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  @@index([chapterId])
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies     Reply[]
+  
+  @@index([authorId])
+}
+
+model Reply {
+  id          String   @id @default(cuid())
+  content     String
+  authorId    String
+  postId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@index([authorId])
+  @@index([postId])
+}
+
