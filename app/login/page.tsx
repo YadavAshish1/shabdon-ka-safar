@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
-
+import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -46,7 +46,16 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
-            <BookOpen className="w-8 h-8 text-primary-600" />
+            {/* <BookOpen className="w-8 h-8 text-primary-600" /> */}
+            <Image
+              src="/icon.png"
+              alt="Logo"
+              width={51}
+              height={51}
+              priority
+
+
+            />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Shabdon Ka Safar

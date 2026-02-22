@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { BookOpen, LogOut, User } from "lucide-react";
-
+import Image from "next/image";
 export function Navbar() {
   const { data: session } = useSession();
 
@@ -13,7 +13,14 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <BookOpen className="w-8 h-8 text-primary-600" />
+            {/* <BookOpen className="w-8 h-8 text-primary-600" /> */}
+            <Image
+              src="/icon.png"
+              alt="Logo"
+              width={31}
+              height={31}
+              priority
+            />
             <span className="text-xl font-bold text-gray-900">Shabdon Ka Safar</span>
           </Link>
 
